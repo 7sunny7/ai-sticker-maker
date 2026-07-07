@@ -15,3 +15,8 @@ AI Sticker Maker 是一个面向创作者的 AI 微信表情包制作工具。
 
 - [MVP 产品方案](docs/mvp-product-plan.md)
 
+## 当前原型
+
+- [静态网页原型](prototype/index.html)
+
+直接用浏览器打开 `prototype/index.html` 即可查看。原型只模拟流程和积分扣减，不接真实 AI 生图 API。

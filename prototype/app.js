@@ -1,0 +1,258 @@
+const initialPlan = [
+  ["收到", "橘猫举起爪子敬礼，表情认真但有点欠揍。"],
+  ["哈哈", "橘猫笑到拍桌，眼睛弯成线，动作夸张。"],
+  ["无语", "橘猫半睁眼翻白眼，尾巴垂着。"],
+  ["谢谢", "橘猫双手合十，脸上带着礼貌假笑。"],
+  ["加油", "橘猫举着小旗，身体前倾，像在给人打气。"],
+  ["抱抱", "橘猫张开双臂，表情软一点但仍然有个性。"],
+  ["下班", "橘猫背着包往外冲，脚下有速度线。"],
+  ["裂开", "橘猫瘫在地上，脑袋旁有裂开的夸张符号。"],
+];
+
+const state = {
+  credits: 60,
+  currentStep: "create",
+  selectedRole: null,
+  generatedCount: 0,
+  stickers: [],
+};
+
+const stepOrder = ["create", "plan", "role", "stickers", "export"];
+const roleData = [
+  {
+    id: "orange",
+    title: "橘猫打工人",
+    body: "短腿橘猫，黑眼圈，蓝色工牌，表情嘴贱但可爱。",
+    color: "#d98b32",
+    mood: "mood-tired",
+  },
+  {
+    id: "round",
+    title: "圆脸欠揍猫",
+    body: "圆脸橘猫，白色嘴套，小红领结，更偏沙雕聊天风。",
+    color: "#e2a347",
+    mood: "mood-laugh",
+  },
+  {
+    id: "sharp",
+    title: "尖耳吐槽猫",
+    body: "瘦一点的橘猫，尖耳朵，绿色小马甲，吐槽感更强。",
+    color: "#c8752f",
+    mood: "mood-shock",
+  },
+];
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+function showToast(message) {
+  const toast = $("#toast");
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
+}
+
+function spendCredits(amount, message) {
+  if (state.credits < amount) {
+    showToast("积分不足，当前原型不会进入充值流程。");
+    return false;
+  }
+  state.credits -= amount;
+  $("#creditBalance").textContent = state.credits;
+  if (message) showToast(message);
+  return true;
+}
+
+function setStep(step) {
+  state.currentStep = step;
+  $$(".screen").forEach((screen) => screen.classList.remove("is-visible"));
+  $(`#screen-${step}`).classList.add("is-visible");
+  $$(".step").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.step === step);
+  });
+}
+
+function fillPlan() {
+  $("#characterInput").value = "主角是一只原创橘猫，带轻微黑眼圈和打工人工牌，性格嘴贱、疲惫但不讨厌，适合微信聊天场景。";
+  $("#styleInput").value = "Q 版贴纸风，粗线条，暖色为主，背景尽量干净，主体轮廓清楚，小尺寸也能看懂动作。";
+  $("#rulesInput").value = "保持同一只橘猫的脸型、耳朵、尾巴、工牌和配色；每张只突出一个动作，减少复杂场景。";
+  $("#negativeInput").value = "不要写实猫，不要真人风，不要复杂背景，不要密集文字，不要现成动漫 IP 风格，不要生成品牌商标。";
+  renderPlanList();
+}
+
+function renderPlanList() {
+  const list = $("#planList");
+  list.innerHTML = initialPlan
+    .map(
+      ([label, action], index) => `
+        <article class="plan-item">
+          <strong>表情 ${index + 1}</strong>
+          <input value="${label}" aria-label="含义词 ${index + 1}" />
+          <textarea aria-label="动作描述 ${index + 1}">${action}</textarea>
+        </article>
+      `,
+    )
+    .join("");
+}
+
+function catMarkup(role, moodClass = "") {
+  const color = role?.color || "#d98b32";
+  return `
+    <div class="cat ${moodClass || role?.mood || ""}" style="--cat-body: ${color}">
+      <div class="face">
+        <div class="eyes"><span></span><span></span></div>
+        <div class="mouth"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRoles() {
+  const container = $("#roleOptions");
+  container.innerHTML = roleData
+    .map(
+      (role) => `
+        <button class="role-option ${state.selectedRole === role.id ? "is-selected" : ""}" data-role="${role.id}" type="button">
+          <div class="sticker-preview">${catMarkup(role)}</div>
+          <h3>${role.title}</h3>
+          <p class="muted">${role.body}</p>
+        </button>
+      `,
+    )
+    .join("");
+
+  $$(".role-option").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedRole = button.dataset.role;
+      renderRoles();
+      renderRoleCard();
+      $("#confirmRoleButton").disabled = false;
+    });
+  });
+}
+
+function renderRoleCard() {
+  const role = roleData.find((item) => item.id === state.selectedRole);
+  if (!role) return;
+  $("#roleCard").innerHTML = `
+    <h3>角色卡：${role.title}</h3>
+    <dl>
+      <dt>外形</dt><dd>${role.body}</dd>
+      <dt>颜色</dt><dd>橘色主体，深色粗线条，保留工牌或领结作为识别点。</dd>
+      <dt>表情</dt><dd>嘴贱、疲惫、夸张，但不凶。</dd>
+      <dt>不可变化</dt><dd>耳朵形状、脸型、主体配色和核心配件不能漂移。</dd>
+    </dl>
+  `;
+}
+
+function getPlanItems() {
+  return $$(".plan-item").map((item) => ({
+    label: item.querySelector("input").value.trim(),
+    action: item.querySelector("textarea").value.trim(),
+  }));
+}
+
+function stickerMarkup(item, index, isGenerated) {
+  if (!isGenerated) {
+    return `
+      <article class="sticker-card pending">
+        <div class="pending-box">待生成</div>
+        <h3>${item.label}</h3>
+        <p>${item.action}</p>
+      </article>
+    `;
+  }
+
+  const role = roleData.find((option) => option.id === state.selectedRole) || roleData[0];
+  const moods = ["mood-tired", "mood-laugh", "mood-shock", "", "mood-laugh", "", "mood-shock", "mood-tired"];
+
+  return `
+    <article class="sticker-card">
+      <div class="sticker-preview">${catMarkup(role, moods[index])}</div>
+      <h3>${item.label}</h3>
+      <p>${item.action}</p>
+      <div class="reason-row">
+        <button class="reason-button" data-reroll="${index}" data-reason="角色不像" type="button">角色不像</button>
+        <button class="reason-button" data-reroll="${index}" data-reason="表情不对" type="button">表情不对</button>
+        <button class="reason-button" data-reroll="${index}" data-reason="太复杂" type="button">太复杂</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderStickers() {
+  const items = getPlanItems();
+  const board = $("#stickerBoard");
+  board.innerHTML = items.map((item, index) => stickerMarkup(item, index, index < state.generatedCount)).join("");
+  $("#exportStickerCount").textContent = `${state.generatedCount} / 8`;
+  $("#generateRestButton").disabled = state.generatedCount < 2 || state.generatedCount >= 8;
+  $("#exportButton").disabled = state.generatedCount < 8;
+  $("#qualityStatus").textContent =
+    state.generatedCount === 0 ? "等待前 2 张验证" : state.generatedCount < 8 ? "前 2 张通过，可继续生成" : "8 张已通过基础检查";
+
+  $$("[data-reroll]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.reroll) + 1;
+      const reason = button.dataset.reason;
+      if (spendCredits(3, `已按“${reason}”重生成第 ${index} 张，扣 3 积分。`)) {
+        button.closest(".sticker-card").classList.add("is-selected");
+      }
+    });
+  });
+}
+
+function resetPrototype() {
+  state.credits = 60;
+  state.currentStep = "create";
+  state.selectedRole = null;
+  state.generatedCount = 0;
+  state.stickers = [];
+  $("#creditBalance").textContent = state.credits;
+  $("#confirmRoleButton").disabled = true;
+  $("#generateRestButton").disabled = true;
+  $("#exportButton").disabled = true;
+  $("#topicInput").value = "一只嘴贱的加班橘猫，适合微信聊天";
+  $("#roleOptions").innerHTML = "";
+  $("#roleCard").innerHTML = "<h3>角色卡</h3><p>选择角色后，系统会沉淀外形、颜色、配件和不可变化点。后续所有表情都围绕角色卡生成。</p>";
+  $("#stickerBoard").innerHTML = "";
+  setStep("create");
+}
+
+$("#generatePlanButton").addEventListener("click", () => {
+  fillPlan();
+  setStep("plan");
+  showToast("方案已生成，免费。");
+});
+
+$("#confirmPlanButton").addEventListener("click", () => {
+  if (!spendCredits(9, "已生成 3 张角色候选，扣 9 积分。")) return;
+  renderRoles();
+  setStep("role");
+});
+
+$("#confirmRoleButton").addEventListener("click", () => {
+  if (!state.selectedRole) return;
+  if (!spendCredits(6, "已生成前 2 张表情，扣 6 积分。")) return;
+  state.generatedCount = Math.max(state.generatedCount, 2);
+  renderStickers();
+  setStep("stickers");
+});
+
+$("#generateRestButton").addEventListener("click", () => {
+  if (!spendCredits(18, "已生成剩余 6 张表情，扣 18 积分。")) return;
+  state.generatedCount = 8;
+  renderStickers();
+  setStep("export");
+});
+
+$("#exportButton").addEventListener("click", () => {
+  showToast("原型中不生成真实 ZIP，这里表示基础投稿包下载成功。");
+});
+
+$("#resetButton").addEventListener("click", resetPrototype);
+
+$$(".step").forEach((button) => {
+  button.addEventListener("click", () => setStep(button.dataset.step));
+});
+
+resetPrototype();

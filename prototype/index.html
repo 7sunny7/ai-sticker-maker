@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Sticker Maker 原型</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">贴</div>
+          <div>
+            <strong>表情工坊</strong>
+            <span>AI 微信表情包原型</span>
+          </div>
+        </div>
+
+        <nav class="steps" aria-label="生成流程">
+          <button class="step is-active" data-step="create" type="button">
+            <span>01</span>
+            创建主题
+          </button>
+          <button class="step" data-step="plan" type="button">
+            <span>02</span>
+            确认方案
+          </button>
+          <button class="step" data-step="role" type="button">
+            <span>03</span>
+            选择角色
+          </button>
+          <button class="step" data-step="stickers" type="button">
+            <span>04</span>
+            生成表情
+          </button>
+          <button class="step" data-step="export" type="button">
+            <span>05</span>
+            导出投稿包
+          </button>
+        </nav>
+
+        <div class="credit-panel">
+          <span>当前积分</span>
+          <strong id="creditBalance">60</strong>
+          <p>出图按张扣分，完成 8 张后首次导出免费。</p>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">MVP Web Prototype</p>
+            <h1>文字生成原创角色表情包</h1>
+          </div>
+          <button class="ghost-button" id="resetButton" type="button">重置原型</button>
+        </header>
+
+        <section class="screen is-visible" id="screen-create">
+          <div class="split-layout">
+            <div class="primary-panel">
+              <p class="section-kicker">创建</p>
+              <h2>先用一句话描述你要的表情包</h2>
+              <p class="muted">这一步只生成结构化方案，不出图，不扣图像积分。</p>
+
+              <label class="field">
+                <span>主题描述</span>
+                <textarea id="topicInput" rows="5">一只嘴贱的加班橘猫，适合微信聊天</textarea>
+              </label>
+
+              <button class="primary-button" id="generatePlanButton" type="button">
+                生成方案
+                <span>0 积分</span>
+              </button>
+            </div>
+
+            <div class="side-note">
+              <h3>本阶段不交付图片</h3>
+              <p>免费阶段只帮助用户把一句话补全为可控方案，避免直接烧积分赌图。</p>
+              <ul>
+                <li>提取主角、性格、画风</li>
+                <li>补齐 8 个聊天场景</li>
+                <li>生成统一规范和禁止项</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-plan">
+          <div class="screen-heading">
+            <div>
+              <p class="section-kicker">方案</p>
+              <h2>确认后再进入付费出图</h2>
+            </div>
+            <button class="primary-button" id="confirmPlanButton" type="button">
+              确认并生成角色候选
+              <span>9 积分</span>
+            </button>
+          </div>
+
+          <div class="plan-grid">
+            <label class="field">
+              <span>主角设定</span>
+              <textarea id="characterInput" rows="5"></textarea>
+            </label>
+            <label class="field">
+              <span>画风设定</span>
+              <textarea id="styleInput" rows="5"></textarea>
+            </label>
+            <label class="field">
+              <span>整套生成规范</span>
+              <textarea id="rulesInput" rows="5"></textarea>
+            </label>
+            <label class="field">
+              <span>禁止项</span>
+              <textarea id="negativeInput" rows="5"></textarea>
+            </label>
+          </div>
+
+          <div class="sticker-list" id="planList"></div>
+        </section>
+
+        <section class="screen" id="screen-role">
+          <div class="screen-heading">
+            <div>
+              <p class="section-kicker">角色</p>
+              <h2>选择一个角色作为整套基准</h2>
+            </div>
+            <button class="primary-button" id="confirmRoleButton" type="button" disabled>
+              生成前 2 张表情
+              <span>6 积分</span>
+            </button>
+          </div>
+
+          <div class="role-options" id="roleOptions"></div>
+
+          <div class="role-card" id="roleCard">
+            <h3>角色卡</h3>
+            <p>选择角色后，系统会沉淀外形、颜色、配件和不可变化点。后续所有表情都围绕角色卡生成。</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-stickers">
+          <div class="screen-heading">
+            <div>
+              <p class="section-kicker">出图</p>
+              <h2>分张生成，降低整套返工</h2>
+            </div>
+            <button class="primary-button" id="generateRestButton" type="button" disabled>
+              生成剩余 6 张
+              <span>18 积分</span>
+            </button>
+          </div>
+
+          <div class="quality-strip">
+            <div>
+              <strong>质量门控</strong>
+              <span>角色一致性、主体完整、动作匹配、小尺寸可读性</span>
+            </div>
+            <span id="qualityStatus">等待前 2 张验证</span>
+          </div>
+
+          <div class="sticker-board" id="stickerBoard"></div>
+        </section>
+
+        <section class="screen" id="screen-export">
+          <div class="split-layout">
+            <div class="primary-panel">
+              <p class="section-kicker">导出</p>
+              <h2>基础微信投稿包</h2>
+              <p class="muted">完成 8 张后，首次基础导出不再额外扣积分。</p>
+
+              <div class="export-checks">
+                <div><span>表情图</span><strong id="exportStickerCount">0 / 8</strong></div>
+                <div><span>缩略图</span><strong>自动生成</strong></div>
+                <div><span>封面/图标/横幅</span><strong>自动生成</strong></div>
+                <div><span>含义词文件</span><strong>已准备</strong></div>
+              </div>
+
+              <button class="primary-button" id="exportButton" type="button" disabled>
+                下载基础投稿 ZIP
+                <span>0 积分</span>
+              </button>
+            </div>
+
+            <div class="side-note">
+              <h3>不自动上架</h3>
+              <p>MVP 只导出投稿素材包，用户仍需登录微信表情开放平台手动提交和审核。</p>
+              <ul>
+                <li>不接微信账号授权</li>
+                <li>不模拟自动投稿</li>
+                <li>不承诺审核通过</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
