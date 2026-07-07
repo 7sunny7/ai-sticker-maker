@@ -256,6 +256,81 @@ h3 {
   font-weight: 900;
 }
 
+.create-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.create-actions .ghost-button {
+  margin-top: 24px;
+}
+
+.direction-area {
+  margin-top: 30px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+
+.direction-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.direction-heading h3 {
+  margin-bottom: 0;
+}
+
+.direction-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.direction-card {
+  text-align: left;
+  border: 1px solid var(--line);
+  background: #fffaf1;
+  border-radius: 8px;
+  padding: 14px;
+  color: var(--ink);
+}
+
+.direction-card:hover {
+  transform: translateY(-1px);
+}
+
+.direction-card strong {
+  display: block;
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+
+.direction-card p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.direction-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.direction-tags span {
+  color: var(--olive);
+  background: #efe0c7;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 textarea {
   width: 100%;
   resize: vertical;
@@ -650,7 +725,8 @@ textarea:focus {
   }
 
   .sticker-list,
-  .sticker-board {
+  .sticker-board,
+  .direction-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -672,7 +748,8 @@ textarea:focus {
   }
 
   .sticker-list,
-  .sticker-board {
+  .sticker-board,
+  .direction-cards {
     grid-template-columns: 1fr;
   }
 

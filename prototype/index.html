@@ -68,10 +68,26 @@
                 <textarea id="topicInput" rows="5">一只嘴贱的加班橘猫，适合微信聊天</textarea>
               </label>
 
-              <button class="primary-button" id="generatePlanButton" type="button">
-                生成方案
-                <span>0 积分</span>
-              </button>
+              <div class="create-actions">
+                <button class="primary-button" id="generatePlanButton" type="button">
+                  生成方案
+                  <span>0 积分</span>
+                </button>
+                <button class="ghost-button" id="drawDirectionButton" type="button">
+                  帮我抽方向
+                </button>
+              </div>
+
+              <div class="direction-area" id="directionArea" hidden>
+                <div class="direction-heading">
+                  <div>
+                    <p class="section-kicker">方向卡</p>
+                    <h3>先选一个更明确的创作方向</h3>
+                  </div>
+                  <button class="mini-button" id="redrawDirectionButton" type="button">换一批</button>
+                </div>
+                <div class="direction-cards" id="directionCards"></div>
+              </div>
             </div>
 
             <div class="side-note">
@@ -79,6 +95,7 @@
               <p>免费阶段只帮助用户把一句话补全为可控方案，避免直接烧积分赌图。</p>
               <ul>
                 <li>提取主角、性格、画风</li>
+                <li>模糊主题先抽方向卡</li>
                 <li>补齐 8 个聊天场景</li>
                 <li>生成统一规范和禁止项</li>
               </ul>

@@ -9,12 +9,56 @@ const initialPlan = [
   ["裂开", "橘猫瘫在地上，脑袋旁有裂开的夸张符号。"],
 ];
 
+const directionDecks = [
+  [
+    {
+      title: "加班橘猫",
+      topic: "一只嘴贱的加班橘猫，适合微信聊天",
+      description: "打工人日常，高频聊天场景，情绪偏吐槽和崩溃。",
+      tags: ["职场", "嘴贱", "Q 版贴纸"],
+    },
+    {
+      title: "社恐小熊",
+      topic: "一只社恐但礼貌的小熊，适合朋友聊天",
+      description: "适合轻社交、道歉、谢谢、逃避和自我安慰场景。",
+      tags: ["治愈", "社恐", "软萌"],
+    },
+    {
+      title: "暴躁饭团",
+      topic: "一个暴躁但可爱的饭团，适合回怼聊天",
+      description: "主打回怼、无语、别烦我和阴阳怪气，适合传播。",
+      tags: ["回怼", "沙雕", "食物拟人"],
+    },
+  ],
+  [
+    {
+      title: "摸鱼企鹅",
+      topic: "一只擅长摸鱼的企鹅，适合上班群聊天",
+      description: "围绕开会、下班、已读、装忙展开，画面清爽。",
+      tags: ["上班", "摸鱼", "冷幽默"],
+    },
+    {
+      title: "元气奶茶杯",
+      topic: "一杯元气满满的奶茶，适合日常鼓励聊天",
+      description: "适合谢谢、加油、抱抱、开心和恢复能量场景。",
+      tags: ["元气", "治愈", "饮品拟人"],
+    },
+    {
+      title: "发疯小怪兽",
+      topic: "一只压力很大的小怪兽，适合情绪发疯聊天",
+      description: "夸张动作多，适合裂开、尖叫、崩溃、别管我。",
+      tags: ["发疯", "夸张", "高情绪"],
+    },
+  ],
+];
+
 const state = {
   credits: 60,
   currentStep: "create",
   selectedRole: null,
   generatedCount: 0,
   stickers: [],
+  directionDeckIndex: 0,
 };
 
 const stepOrder = ["create", "plan", "role", "stickers", "export"];
@@ -73,11 +117,52 @@ function setStep(step) {
 }
 
 function fillPlan() {
-  $("#characterInput").value = "主角是一只原创橘猫，带轻微黑眼圈和打工人工牌，性格嘴贱、疲惫但不讨厌，适合微信聊天场景。";
+  const topic = $("#topicInput").value.trim();
+  const isBear = topic.includes("小熊");
+  const isFood = topic.includes("饭团") || topic.includes("奶茶");
+  const isPenguin = topic.includes("企鹅");
+  const isMonster = topic.includes("怪兽");
+  const character = isBear
+    ? "主角是一只原创小熊，体型圆润，表情礼貌但紧张，适合朋友聊天和轻社交场景。"
+    : isFood
+      ? "主角是一个原创拟人食物角色，轮廓简单，表情夸张，适合日常聊天传播。"
+      : isPenguin
+        ? "主角是一只原创企鹅，带一点上班族疲惫感，动作克制但有冷幽默。"
+        : isMonster
+          ? "主角是一只原创小怪兽，表情夸张，压力很大但不吓人，适合高情绪聊天场景。"
+          : "主角是一只原创橘猫，带轻微黑眼圈和打工人工牌，性格嘴贱、疲惫但不讨厌，适合微信聊天场景。";
+
+  $("#characterInput").value = character;
   $("#styleInput").value = "Q 版贴纸风，粗线条，暖色为主，背景尽量干净，主体轮廓清楚，小尺寸也能看懂动作。";
-  $("#rulesInput").value = "保持同一只橘猫的脸型、耳朵、尾巴、工牌和配色；每张只突出一个动作，减少复杂场景。";
-  $("#negativeInput").value = "不要写实猫，不要真人风，不要复杂背景，不要密集文字，不要现成动漫 IP 风格，不要生成品牌商标。";
+  $("#rulesInput").value = "保持同一角色的脸型、主体配色、核心配件和表情气质；每张只突出一个动作，减少复杂场景。";
+  $("#negativeInput").value = "不要写实风，不要真人风，不要复杂背景，不要密集文字，不要现成动漫 IP 风格，不要生成品牌商标。";
   renderPlanList();
+}
+
+function renderDirectionCards() {
+  const cards = directionDecks[state.directionDeckIndex % directionDecks.length];
+  $("#directionCards").innerHTML = cards
+    .map(
+      (card) => `
+        <button class="direction-card" data-topic="${card.topic}" type="button">
+          <strong>${card.title}</strong>
+          <p>${card.description}</p>
+          <div class="direction-tags">
+            ${card.tags.map((tag) => `<span>${tag}</span>`).join("")}
+          </div>
+        </button>
+      `,
+    )
+    .join("");
+
+  $$(".direction-card").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#topicInput").value = button.dataset.topic;
+      fillPlan();
+      setStep("plan");
+      showToast("已选方向卡，并拆解为完整方案。");
+    });
+  });
 }
 
 function renderPlanList() {
@@ -212,6 +297,8 @@ function resetPrototype() {
   $("#generateRestButton").disabled = true;
   $("#exportButton").disabled = true;
   $("#topicInput").value = "一只嘴贱的加班橘猫，适合微信聊天";
+  $("#directionArea").hidden = true;
+  $("#directionCards").innerHTML = "";
   $("#roleOptions").innerHTML = "";
   $("#roleCard").innerHTML = "<h3>角色卡</h3><p>选择角色后，系统会沉淀外形、颜色、配件和不可变化点。后续所有表情都围绕角色卡生成。</p>";
   $("#stickerBoard").innerHTML = "";
@@ -222,6 +309,18 @@ $("#generatePlanButton").addEventListener("click", () => {
   fillPlan();
   setStep("plan");
   showToast("方案已生成，免费。");
+});
+
+$("#drawDirectionButton").addEventListener("click", () => {
+  $("#directionArea").hidden = false;
+  renderDirectionCards();
+  showToast("已抽出 3 个方向，先选方向再出图。");
+});
+
+$("#redrawDirectionButton").addEventListener("click", () => {
+  state.directionDeckIndex += 1;
+  renderDirectionCards();
+  showToast("已换一批方向卡。");
 });
 
 $("#confirmPlanButton").addEventListener("click", () => {
