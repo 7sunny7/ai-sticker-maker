@@ -53,17 +53,18 @@ button {
 
 .steps {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .step {
-  width: 100%;
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
-  text-align: left;
-  padding: 12px;
+  text-align: center;
+  padding: 10px 8px;
   border-radius: 4px;
+  font-size: 14px;
 }
 
 .step.is-active {
@@ -162,7 +163,7 @@ h2 {
   background: var(--soft);
   color: var(--ink);
   border-radius: 4px;
-  padding: 16px;
+  padding: 12px;
   text-align: left;
   font-weight: 800;
 }
@@ -453,7 +454,6 @@ input:focus {
     border-bottom: 1px solid var(--line);
   }
 
-  .segmented,
   .direction-grid {
     grid-template-columns: 1fr;
   }

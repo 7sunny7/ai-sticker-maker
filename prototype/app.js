@@ -298,7 +298,6 @@ function reset() {
   setStep("create");
 }
 
-$$(".step").forEach((button) => button.addEventListener("click", () => setStep(button.dataset.step)));
 $$(".segment").forEach((button) => button.addEventListener("click", () => setCount(Number(button.dataset.count))));
 
 $("#generateItemsButton").addEventListener("click", generateItems);
