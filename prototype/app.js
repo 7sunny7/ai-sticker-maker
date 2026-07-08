@@ -320,7 +320,7 @@ $("#drawDirectionButton").addEventListener("click", () => {
 $("#redrawDirectionButton").addEventListener("click", () => {
   state.directionDeckIndex += 1;
   renderDirectionCards();
-  showToast("已换一批方向卡。");
+  showToast("已刷新方向卡，不消耗积分。");
 });
 
 $("#confirmPlanButton").addEventListener("click", () => {
