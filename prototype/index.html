@@ -3,211 +3,114 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Sticker Maker 原型</title>
+    <title>AI Sticker Maker 低保真原型</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-mark">贴</div>
-          <div>
-            <strong>表情工坊</strong>
-            <span>AI 微信表情包原型</span>
-          </div>
-        </div>
-
-        <nav class="steps" aria-label="生成流程">
-          <button class="step is-active" data-step="create" type="button">
-            <span>01</span>
-            创建主题
-          </button>
-          <button class="step" data-step="plan" type="button">
-            <span>02</span>
-            确认方案
-          </button>
-          <button class="step" data-step="role" type="button">
-            <span>03</span>
-            选择角色
-          </button>
-          <button class="step" data-step="stickers" type="button">
-            <span>04</span>
-            生成表情
-          </button>
-          <button class="step" data-step="export" type="button">
-            <span>05</span>
-            导出投稿包
-          </button>
+    <div class="shell">
+      <aside class="rail">
+        <div class="logo">表情网格生成器</div>
+        <nav class="steps" aria-label="MVP 流程">
+          <button class="step is-active" data-step="create" type="button">1. 创建</button>
+          <button class="step" data-step="items" type="button">2. 条目</button>
+          <button class="step" data-step="result" type="button">3. 大图</button>
         </nav>
-
-        <div class="credit-panel">
-          <span>当前积分</span>
-          <strong id="creditBalance">60</strong>
-          <p>出图按张扣分，完成 8 张后首次导出免费。</p>
+        <div class="note">
+          <strong>MVP 只验证核心链路</strong>
+          <p>不做积分、上架、切图、单张补图和投稿包。</p>
         </div>
       </aside>
 
-      <main class="workspace">
-        <header class="topbar">
+      <main class="main">
+        <header class="header">
           <div>
-            <p class="eyebrow">MVP Web Prototype</p>
-            <h1>文字生成原创角色表情包</h1>
+            <p>Low fidelity prototype</p>
+            <h1>生成一张含字表情包网格大图</h1>
           </div>
-          <button class="ghost-button" id="resetButton" type="button">重置原型</button>
+          <button class="button secondary" id="resetButton" type="button">重置</button>
         </header>
 
         <section class="screen is-visible" id="screen-create">
-          <div class="split-layout">
-            <div class="primary-panel">
-              <p class="section-kicker">创建</p>
-              <h2>先用一句话描述你要的表情包</h2>
-              <p class="muted">这一步只生成结构化方案，不出图，不扣图像积分。</p>
-
-              <label class="field">
-                <span>主题描述</span>
-                <textarea id="topicInput" rows="5">一只嘴贱的加班橘猫，适合微信聊天</textarea>
-              </label>
-
-              <div class="create-actions">
-                <button class="primary-button" id="generatePlanButton" type="button">
-                  生成方案
-                  <span>0 积分</span>
-                </button>
-                <button class="ghost-button" id="drawDirectionButton" type="button">
-                  帮我抽方向
-                </button>
-              </div>
-
-              <div class="direction-area" id="directionArea" hidden>
-                <div class="direction-heading">
-                  <div>
-                    <p class="section-kicker">方向卡</p>
-                    <h3>先选一个更明确的创作方向</h3>
-                  </div>
-                  <button class="mini-button" id="redrawDirectionButton" type="button">刷新方向</button>
-                </div>
-                <div class="direction-cards" id="directionCards"></div>
-              </div>
-            </div>
-
-            <div class="side-note">
-              <h3>本阶段不交付图片</h3>
-              <p>免费阶段只帮助用户把一句话补全为可控方案，避免直接烧积分赌图。</p>
-              <ul>
-                <li>提取主角、性格、画风</li>
-                <li>模糊主题先抽方向卡</li>
-                <li>补齐 8 个聊天场景</li>
-                <li>生成统一规范和禁止项</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section class="screen" id="screen-plan">
-          <div class="screen-heading">
-            <div>
-              <p class="section-kicker">方案</p>
-              <h2>确认后再进入付费出图</h2>
-            </div>
-            <button class="primary-button" id="confirmPlanButton" type="button">
-              确认并生成角色候选
-              <span>9 积分</span>
-            </button>
-          </div>
-
-          <div class="plan-grid">
-            <label class="field">
-              <span>主角设定</span>
-              <textarea id="characterInput" rows="5"></textarea>
-            </label>
-            <label class="field">
-              <span>画风设定</span>
-              <textarea id="styleInput" rows="5"></textarea>
-            </label>
-            <label class="field">
-              <span>整套生成规范</span>
-              <textarea id="rulesInput" rows="5"></textarea>
-            </label>
-            <label class="field">
-              <span>禁止项</span>
-              <textarea id="negativeInput" rows="5"></textarea>
-            </label>
-          </div>
-
-          <div class="sticker-list" id="planList"></div>
-        </section>
-
-        <section class="screen" id="screen-role">
-          <div class="screen-heading">
-            <div>
-              <p class="section-kicker">角色</p>
-              <h2>选择一个角色作为整套基准</h2>
-            </div>
-            <button class="primary-button" id="confirmRoleButton" type="button" disabled>
-              生成前 2 张表情
-              <span>6 积分</span>
-            </button>
-          </div>
-
-          <div class="role-options" id="roleOptions"></div>
-
-          <div class="role-card" id="roleCard">
-            <h3>角色卡</h3>
-            <p>选择角色后，系统会沉淀外形、颜色、配件和不可变化点。后续所有表情都围绕角色卡生成。</p>
-          </div>
-        </section>
-
-        <section class="screen" id="screen-stickers">
-          <div class="screen-heading">
-            <div>
-              <p class="section-kicker">出图</p>
-              <h2>分张生成，降低整套返工</h2>
-            </div>
-            <button class="primary-button" id="generateRestButton" type="button" disabled>
-              生成剩余 6 张
-              <span>18 积分</span>
-            </button>
-          </div>
-
-          <div class="quality-strip">
-            <div>
-              <strong>质量门控</strong>
-              <span>角色一致性、主体完整、动作匹配、小尺寸可读性</span>
-            </div>
-            <span id="qualityStatus">等待前 2 张验证</span>
-          </div>
-
-          <div class="sticker-board" id="stickerBoard"></div>
-        </section>
-
-        <section class="screen" id="screen-export">
-          <div class="split-layout">
-            <div class="primary-panel">
-              <p class="section-kicker">导出</p>
-              <h2>基础微信投稿包</h2>
-              <p class="muted">完成 8 张后，首次基础导出不再额外扣积分。</p>
-
-              <div class="export-checks">
-                <div><span>表情图</span><strong id="exportStickerCount">0 / 8</strong></div>
-                <div><span>缩略图</span><strong>自动生成</strong></div>
-                <div><span>封面/图标/横幅</span><strong>自动生成</strong></div>
-                <div><span>含义词文件</span><strong>已准备</strong></div>
-              </div>
-
-              <button class="primary-button" id="exportButton" type="button" disabled>
-                下载基础投稿 ZIP
-                <span>0 积分</span>
+          <div class="panel">
+            <h2>选择数量</h2>
+            <p class="hint">数量会决定条目数量、网格规格和最终大图布局。</p>
+            <div class="segmented" role="group" aria-label="表情数量">
+              <button class="segment is-active" data-count="8" type="button">
+                8 张
+                <span>2 x 4</span>
+              </button>
+              <button class="segment" data-count="16" type="button">
+                16 张
+                <span>4 x 4</span>
+              </button>
+              <button class="segment" data-count="24" type="button">
+                24 张
+                <span>4 x 6</span>
               </button>
             </div>
+          </div>
 
-            <div class="side-note">
-              <h3>不自动上架</h3>
-              <p>MVP 只导出投稿素材包，用户仍需登录微信表情开放平台手动提交和审核。</p>
-              <ul>
-                <li>不接微信账号授权</li>
-                <li>不模拟自动投稿</li>
-                <li>不承诺审核通过</li>
-              </ul>
+          <div class="panel">
+            <h2>输入主题</h2>
+            <p class="hint">如果用户不写条目，系统会根据主题、数量自由生成完整条目。</p>
+            <label class="field">
+              <span>主题</span>
+              <textarea id="topicInput" rows="4">一只嘴贱的加班橘猫，适合微信聊天</textarea>
+            </label>
+            <div class="actions">
+              <button class="button primary" id="generateItemsButton" type="button">生成表情条目</button>
+              <button class="button secondary" id="drawDirectionButton" type="button">帮我抽方向</button>
+            </div>
+          </div>
+
+          <div class="panel" id="directionPanel" hidden>
+            <div class="panel-heading">
+              <div>
+                <h2>方向卡</h2>
+                <p class="hint">只刷新创作方向，不生成图片。</p>
+              </div>
+              <button class="button secondary" id="refreshDirectionButton" type="button">刷新方向</button>
+            </div>
+            <div class="direction-grid" id="directionGrid"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-items">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>系统生成的表情条目</h2>
+                <p class="hint">用户可以不改。这里的条目只是大图 prompt 的结构化输入。</p>
+              </div>
+              <button class="button primary" id="generateGridButton" type="button">生成含字大图</button>
+            </div>
+            <div class="meta-row">
+              <span id="countMeta">8 张</span>
+              <span id="gridMeta">2 x 4 网格</span>
+              <span>文字由生图模型直接画入图片</span>
+            </div>
+            <div class="item-list" id="itemList"></div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-result">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>含字网格大图</h2>
+                <p class="hint">低保真原型用 SVG 占位模拟大图。真实版本会调用生图 API。</p>
+              </div>
+              <div class="actions compact">
+                <button class="button secondary" id="backToItemsButton" type="button">返回改条目</button>
+                <button class="button primary" id="downloadButton" type="button">下载大图</button>
+              </div>
+            </div>
+            <div class="mock-image-wrap">
+              <div class="mock-image" id="mockImage"></div>
+            </div>
+            <div class="note inline">
+              <strong>当前 MVP 到这里结束</strong>
+              <p>用户后续自行切图和处理；不做切图状态、单张补图、积分和微信投稿。</p>
             </div>
           </div>
         </section>
@@ -215,7 +118,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
     <script src="./app.js"></script>
   </body>
 </html>
