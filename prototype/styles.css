@@ -250,6 +250,16 @@ input:focus {
   margin-top: 0;
 }
 
+.bottom-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bottom-actions .button {
+  min-width: 220px;
+}
+
 .button {
   border: 1px solid var(--line);
   border-radius: 4px;
