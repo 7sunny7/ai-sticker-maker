@@ -51,15 +51,15 @@
           </div>
 
           <div class="panel">
-            <h2>输入主题</h2>
-            <p class="hint">如果用户不写条目，系统会根据主题、数量自由生成完整条目。</p>
+            <h2>主题或抽方向</h2>
+            <p class="hint">主题是可选约束。有主题就围绕主题抽方向；不填就随机抽方向。</p>
             <label class="field">
-              <span>主题</span>
+              <span>主题（可选）</span>
               <textarea id="topicInput" rows="4">一只嘴贱的加班橘猫，适合微信聊天</textarea>
             </label>
             <div class="actions">
               <button class="button primary" id="generateItemsButton" type="button">生成表情条目</button>
-              <button class="button secondary" id="drawDirectionButton" type="button">帮我抽方向</button>
+              <button class="button secondary" id="drawDirectionButton" type="button">围绕主题抽方向</button>
             </div>
           </div>
 
@@ -67,7 +67,7 @@
             <div class="panel-heading">
               <div>
                 <h2>方向卡</h2>
-                <p class="hint">只刷新创作方向，不生成图片。</p>
+                <p class="hint" id="directionHint">选择方向后，会替换为更明确的主题并生成条目。</p>
               </div>
               <button class="button secondary" id="refreshDirectionButton" type="button">刷新方向</button>
             </div>

@@ -112,6 +112,10 @@ function setCount(count) {
 }
 
 function renderDirectionCards() {
+  const topic = $("#topicInput").value.trim();
+  $("#directionHint").textContent = topic
+    ? `正在围绕“${topic}”发散方向。选择方向后，会替换为更明确的主题并生成条目。`
+    : "当前没有主题，系统会随机给出创作方向。选择方向后，会生成条目。";
   const deck = directionDecks[state.directionDeckIndex % directionDecks.length];
   $("#directionGrid").innerHTML = deck
     .map(
@@ -304,7 +308,7 @@ $("#generateItemsButton").addEventListener("click", generateItems);
 $("#drawDirectionButton").addEventListener("click", () => {
   $("#directionPanel").hidden = false;
   renderDirectionCards();
-  showToast("已生成方向卡。");
+  showToast($("#topicInput").value.trim() ? "已围绕当前主题生成方向卡。" : "已随机生成方向卡。");
 });
 $("#refreshDirectionButton").addEventListener("click", () => {
   state.directionDeckIndex += 1;
