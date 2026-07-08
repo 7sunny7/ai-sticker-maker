@@ -190,11 +190,16 @@ function renderItems() {
   $("#itemList").innerHTML = state.items
     .map(
       (item, index) => `
-        <div class="item-row" data-index="${index}">
+        <div class="item-row" data-index="${index}" data-action="${item.action}">
           <div class="item-index">#${String(index + 1).padStart(2, "0")}</div>
-          <input class="meaning-input" value="${item.meaning}" aria-label="含义词 ${index + 1}" />
-          <input class="text-input" value="${item.text}" aria-label="图片内文字 ${index + 1}" />
-          <textarea class="action-input" aria-label="动作描述 ${index + 1}">${item.action}</textarea>
+          <label class="item-text-field">
+            <span>画面文字</span>
+            <input class="text-input" value="${item.text}" aria-label="画面文字 ${index + 1}" />
+          </label>
+          <div class="auto-action">
+            <span>系统动作</span>
+            <p>${item.action}</p>
+          </div>
         </div>
       `,
     )
@@ -204,9 +209,9 @@ function renderItems() {
 function syncItemsFromForm() {
   state.items = $$(".item-row").map((row, index) => ({
     index: index + 1,
-    meaning: row.querySelector(".meaning-input").value.trim() || `表情${index + 1}`,
     text: row.querySelector(".text-input").value.trim() || `表情${index + 1}`,
-    action: row.querySelector(".action-input").value.trim() || "根据主题自由生成动作。",
+    meaning: row.querySelector(".text-input").value.trim() || `表情${index + 1}`,
+    action: row.dataset.action || "根据主题自由生成动作。",
   }));
 }
 

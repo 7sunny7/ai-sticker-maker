@@ -299,7 +299,7 @@ input:focus {
 
 .item-row {
   display: grid;
-  grid-template-columns: 56px 120px 130px minmax(0, 1fr);
+  grid-template-columns: 56px minmax(120px, 180px) minmax(0, 1fr);
   gap: 10px;
   align-items: start;
   border: 1px solid var(--line);
@@ -314,9 +314,27 @@ input:focus {
   padding-top: 10px;
 }
 
-.item-row textarea {
-  min-height: 42px;
-  resize: vertical;
+.item-text-field {
+  display: grid;
+  gap: 6px;
+}
+
+.item-text-field span,
+.auto-action span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.auto-action {
+  border-left: 1px solid var(--line);
+  padding-left: 12px;
+}
+
+.auto-action p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 0;
 }
 
 .mock-image-wrap {
