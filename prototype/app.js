@@ -195,15 +195,10 @@ function renderItems() {
     .map(
       (item, index) => `
         <div class="item-row" data-index="${index}" data-action="${item.action}">
-          <div class="item-index">#${String(index + 1).padStart(2, "0")}</div>
           <label class="item-text-field">
-            <span>画面文字</span>
+            <span>#${String(index + 1).padStart(2, "0")}</span>
             <input class="text-input" value="${item.text}" aria-label="画面文字 ${index + 1}" />
           </label>
-          <div class="auto-action">
-            <span>系统动作</span>
-            <p>${item.action}</p>
-          </div>
         </div>
       `,
     )
