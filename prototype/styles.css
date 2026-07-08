@@ -52,26 +52,58 @@ button {
 }
 
 .steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+  position: relative;
+  padding: 2px 0 0;
+}
+
+.steps::before {
+  content: "";
+  position: absolute;
+  left: 38px;
+  right: 38px;
+  top: 18px;
+  height: 1px;
+  background: var(--line);
 }
 
 .step {
-  border: 1px solid var(--line);
-  background: transparent;
+  position: relative;
+  z-index: 1;
   color: var(--muted);
   text-align: center;
-  padding: 10px 8px;
-  border-radius: 4px;
+  width: 76px;
   font-size: 14px;
 }
 
-.step.is-active {
-  background: var(--panel);
-  color: var(--ink);
-  border-color: var(--ink);
+.step-dot {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 7px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #ecece7;
+  font-weight: 800;
+}
+
+.step-label {
+  display: block;
   font-weight: 700;
+}
+
+.step.is-active {
+  color: var(--ink);
+}
+
+.step.is-active .step-dot {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
 }
 
 .note {
